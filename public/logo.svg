@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="Logo Printy">
+  <defs>
+    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#08704e"/>
+      <stop offset="0.52" stop-color="#00563b"/>
+      <stop offset="1" stop-color="#00452f"/>
+    </linearGradient>
+    <clipPath id="shape">
+      <path d="M147 42 H332 Q362 42 362 73 V224 Q362 311 268 352 H74 Q40 352 40 318 V180 Q40 42 147 42 Z"/>
+    </clipPath>
+  </defs>
+  <!-- Transparent canvas; the white interior is a cutout. -->
+  <path fill="url(#green)" fill-rule="evenodd" d="M147 42 H332 Q362 42 362 73 V224 Q362 311 268 352 H74 Q40 352 40 318 V180 Q40 42 147 42 Z M177 126 Q132 149 132 200 V264 H201 Q270 264 275 194 V126 Z"/>
+  <g clip-path="url(#shape)" opacity="0.35">
+    <path d="M29 323 L155 224 L71 365 L29 365 Z" fill="#7bb484"/>
+    <path d="M276 126 L352 42 L370 42 L370 122 L275 215 Z" fill="#438e6a"/>
+  </g>
+</svg>
