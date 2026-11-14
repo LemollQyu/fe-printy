@@ -1,15 +1,23 @@
 import type { AuthMode } from './auth-types';
 
+/* Hanya mode yang tampil sebagai TAB. OTP sengaja tidak di sini. */
 export const AUTH_MODES: { value: AuthMode; label: string; icon: 'user-round' | 'lock-keyhole' | 'key-round'; order: number }[] = [
   { value: 'signup', label: 'Sign Up', icon: 'user-round', order: 1 },
   { value: 'signin', label: 'Sign In', icon: 'lock-keyhole', order: 2 },
   { value: 'forgot', label: 'Forgot Password', icon: 'key-round', order: 3 },
 ];
 
-export const MODE_ORDER: Record<AuthMode, number> = AUTH_MODES.reduce((acc, item) => {
-  acc[item.value] = item.order;
-  return acc;
-}, {} as Record<AuthMode, number>);
+/* Mode "langkah" = halaman buku yang bukan tab. Perpindahan dari/ke sini
+   selalu satu kali balik lembar (tanpa melewati halaman lain). */
+export const STEP_MODES: AuthMode[] = ['otp'];
+
+export const MODE_ORDER: Record<AuthMode, number> = {
+  ...AUTH_MODES.reduce((acc, item) => {
+    acc[item.value] = item.order;
+    return acc;
+  }, {} as Record<AuthMode, number>),
+  otp: 3.5, // setelah forgot (3): Forgot → OTP
+};
 
 export const PASSWORD_RULES = [
   { label: 'Minimal 8 karakter', check: (s: string) => s.length >= 8 },
@@ -22,8 +30,8 @@ export const PAGE_DECOR: Record<AuthMode, {
   rightEyebrow: string;
   rightQuoteTop?: string;
   rightSignature: string[];
-  leftDecor: 'signup' | 'signin' | 'forgot';
-  rightDecor: 'signup' | 'signin' | 'forgot';
+  leftDecor: 'signup' | 'signin' | 'forgot' | 'otp';
+  rightDecor: 'signup' | 'signin' | 'forgot' | 'otp';
 }> = {
   signup: {
     rightEyebrow: 'HALAMAN CATATAN\nUNTUK IDE ANDA',
@@ -45,5 +53,12 @@ export const PAGE_DECOR: Record<AuthMode, {
     rightSignature: ['Tarik Nafas,', 'Mulai Lagi.'],
     leftDecor: 'forgot',
     rightDecor: 'forgot',
+  },
+  otp: {
+    rightEyebrow: 'SATU LANGKAH LAGI\nUNTUK PULIH',
+    rightQuoteTop: 'Kode kecil ini memastikan halamanmu tetap milikmu seorang.',
+    rightSignature: ['Hampir Selesai,', 'Satu Kode Lagi.'],
+    leftDecor: 'otp',
+    rightDecor: 'otp',
   },
 };

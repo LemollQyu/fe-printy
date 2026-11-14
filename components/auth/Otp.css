@@ -1,0 +1,170 @@
+/* =============================================================
+   OTP — tempel di BAWAH auth.css
+   ============================================================= */
+
+/* kotak kode: garis tulis + angka tulisan tangan */
+.pb-otp {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: calc(var(--gap) * 1.2);
+}
+.pb-otp input {
+  width: 100%;
+  min-width: 0;
+  height: 48px;
+  padding: 0 0 .1em;
+  border: 0;
+  border-bottom: 1.5px solid var(--rule);
+  border-radius: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--pen);
+  caret-color: var(--pen);
+  font-family: var(--f-hand);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+  text-shadow: 0 0 .5px rgba(28, 44, 88, .4);
+  transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+}
+.pb-otp input.is-filled { border-bottom-color: rgba(28, 44, 88, .6); }
+.pb-otp input:focus {
+  border-bottom-color: var(--pen);
+  box-shadow: 0 1px 0 var(--pen);
+  background: linear-gradient(180deg, transparent 55%, rgba(255, 244, 190, .45));
+}
+.pb-otp.is-error input {
+  border-bottom-color: #b3382f;
+  box-shadow: 0 1px 0 #b3382f;
+}
+
+/* teks pengantar & link "Kirim ulang" ikut gaya Sign In / Forgot */
+.pb-formbody--otp .pb-lede {
+  margin: calc(var(--gap) * -.8) 0 calc(var(--gap) * 1.2);
+  max-width: 30em;
+  color: #6b6252;
+  font-family: var(--f-serif);
+  font-size: max(13px, 1cqw);
+  font-style: italic;
+}
+.pb-formbody--otp .pb-lede strong { color: var(--ink); font-weight: 650; }
+.pb-formbody--otp .pb-legal { margin-top: calc(var(--gap) * .9); }
+.pb-formbody--otp .pb-otp + .pb-fld-err { margin-top: .4em; }
+.pb-formbody--otp .pb-legal button {
+  color: var(--pen);
+  font-family: var(--f-hand);
+  font-size: 1.5em;
+  text-decoration: none;
+  border-bottom: 1.5px dashed rgba(28, 44, 88, .45);
+}
+.pb-formbody--otp .pb-legal button:hover:not(:disabled) { color: var(--leaf); }
+.pb-formbody--otp .pb-legal button:disabled {
+  opacity: .5;
+  border-bottom-color: transparent;
+  cursor: default;
+}
+
+/* daun halaman OTP: dikunci per halaman, lebih kecil dari mode lain */
+.pb-paper-left-otp [class*='pb-deco'] {
+  width: 14%;
+  opacity: .5;
+}
+.pb-paper-right-otp [class*='pb-deco'][class*='top'] {
+  width: 18%;
+  opacity: .8;
+}
+.pb-paper-right-otp [class*='pb-deco'][class*='bottom'] {
+  width: 24%;
+  opacity: .85;
+}
+
+/* daun halaman OTP: lebih kecil dari mode lain.
+   ".pb-paper" di depan menaikkan prioritas, jadi tetap menang
+   walau urutan file CSS-mu berbeda. */
+.pb-paper .pb-deco-left-otp   { left: 0; bottom: 0; width: 16%; opacity: .3; }
+.pb-paper .pb-deco-top-otp    { top: 0; right: 0; width: 18%; opacity: .8; }
+.pb-paper .pb-deco-bottom-otp { right: 0; bottom: 0; width: 24%; opacity: .85; }
+
+@media (min-width: 900px) {
+  .pb-paper .pb-deco-left-otp { width: 11%; opacity: .85; }
+}
+
+
+
+
+@media (min-width: 900px) {
+  .pb-otp { gap: max(8px, 1cqw); }
+  .pb-otp input { height: max(48px, 3.8cqw); font-size: max(30px, 2.4cqw); }
+
+}
+
+/* =============================================================
+   OTP · 5 kotak dengan border putus-putus  (v3)
+   TEMPEL DI PALING BAWAH auth.css
+   (hapus semua aturan ".pb-otp ..." versi lama dulu)
+   ============================================================= */
+
+.pb-formbody--otp .pb-otp {
+  --otp-border: rgba(92, 78, 58, .65);
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 52px));
+  justify-content: start;
+  gap: 12px;
+  margin-top: calc(var(--gap) * 1.2);
+}
+
+.pb-formbody--otp .pb-otp input {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  height: 56px;
+  margin: 0;
+  padding: 0;
+  border: 2px dashed var(--otp-border);
+  border-radius: 10px;
+  outline: 0;
+  background: rgba(255, 255, 255, .4);
+  color: var(--pen);
+  caret-color: var(--pen);
+  font-family: var(--f-hand);
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+  text-shadow: 0 0 .5px rgba(28, 44, 88, .4);
+  transition: border-color .2s ease, background .2s ease, box-shadow .2s ease;
+}
+
+/* sudah terisi */
+.pb-formbody--otp .pb-otp input.is-filled {
+  border-color: var(--pen);
+  background: rgba(255, 255, 255, .65);
+}
+
+/* sedang aktif */
+.pb-formbody--otp .pb-otp input:focus {
+  border-color: var(--pen);
+  background: rgba(255, 244, 190, .55);
+  box-shadow: 0 0 0 3px rgba(28, 44, 88, .1);
+}
+
+/* error */
+.pb-formbody--otp .pb-otp.is-error input {
+  border-color: #b3382f;
+  background: rgba(179, 56, 47, .05);
+}
+
+@media (min-width: 900px) {
+  .pb-formbody--otp .pb-otp {
+    grid-template-columns: repeat(5, minmax(0, max(52px, 4.2cqw)));
+    gap: max(12px, 1.4cqw);
+  }
+  .pb-formbody--otp .pb-otp input {
+    height: max(56px, 4.4cqw);
+    font-size: max(32px, 2.6cqw);
+    border-radius: max(10px, .9cqw);
+  }
+}

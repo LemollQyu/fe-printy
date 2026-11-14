@@ -1299,3 +1299,12 @@ body:has(.pb-scene)::-webkit-scrollbar { display: none; }
   .pb-formbody { padding: 20px 16px 24px; }
   .pb-row { grid-template-columns: 1fr; }
 }
+
+/* daun halaman OTP */
+.pb-paper .pb-deco-left-otp   { left: 0; bottom: 0; width: 26%; opacity: .35; }
+.pb-paper .pb-deco-top-otp    { top: 0; right: 0; width: 32%; opacity: .8; }
+.pb-paper .pb-deco-bottom-otp { right: 0; bottom: 0; width: 42%; opacity: .85; }
+
+@media (min-width: 900px) {
+  .pb-paper .pb-deco-left-otp { width: 20%; opacity: .85; }
+}

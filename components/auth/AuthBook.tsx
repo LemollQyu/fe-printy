@@ -15,7 +15,13 @@ import AuthBrandPage from "./AuthBrandPage";
 import SignUpForm from "./forms/SignUpForm";
 import SignInForm from "./forms/SignInForm";
 import ForgotPasswordForm from "./forms/ForgotPasswordForm";
-import { MODE_ORDER, PAGE_DECOR, PASSWORD_RULES } from "./auth-data";
+import OtpForm from "./forms/OtpForm"; // ← BARU
+import {
+  MODE_ORDER,
+  PAGE_DECOR,
+  PASSWORD_RULES,
+  STEP_MODES, // ← BARU
+} from "./auth-data";
 import {
   initialFields,
   type AuthFields,
@@ -26,6 +32,7 @@ import {
 import Botanical from "@/components/popup/Botanical";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const OTP_REGEX = /^\d{5}$/; // ← BARU
 
 type TurnDirection = "forward" | "backward";
 type FlipState = {
@@ -42,6 +49,7 @@ const LEFT_IMG: Record<AuthMode, string> = {
   signup: "/images/auth/leaves-bottom-left.webp",
   signin: "/images/auth/leaves2-bottom-left.png",
   forgot: "/images/auth/leaves-center.png",
+  otp: "/images/auth/leaves-bottom-left.webp", // ← BARU (ganti gambar kalau mau)
 };
 
 /* ---------- Satu halaman penuh (dipakai halaman live DAN muka lembar) ---------- */
@@ -84,6 +92,8 @@ function Page({
             <SignUpForm {...formProps} />
           ) : mode === "signin" ? (
             <SignInForm {...formProps} />
+          ) : mode === "otp" ? (
+            <OtpForm {...formProps} />
           ) : (
             <ForgotPasswordForm {...formProps} />
           )}
@@ -205,16 +215,24 @@ export default function AuthBook() {
       MODE_ORDER[next] > MODE_ORDER[currentMode.current]
         ? "forward"
         : "backward";
+
+    // Halaman "langkah" (OTP) bukan tab: ke/dari sana selalu satu kali balik lembar.
+    const direct =
+      STEP_MODES.includes(next) || STEP_MODES.includes(currentMode.current);
+
     const order = (Object.entries(MODE_ORDER) as [AuthMode, number][])
+      .filter(([id]) => !STEP_MODES.includes(id)) // ← BARU: OTP tidak jadi halaman perantara
       .sort((a, b) => a[1] - b[1])
       .map(([id]) => id);
-    const stops = order.filter((item) =>
-      direction === "forward"
-        ? MODE_ORDER[item] > MODE_ORDER[currentMode.current] &&
-          MODE_ORDER[item] <= MODE_ORDER[next]
-        : MODE_ORDER[item] < MODE_ORDER[currentMode.current] &&
-          MODE_ORDER[item] >= MODE_ORDER[next],
-    );
+    const stops: AuthMode[] = direct
+      ? [next]
+      : order.filter((item) =>
+          direction === "forward"
+            ? MODE_ORDER[item] > MODE_ORDER[currentMode.current] &&
+              MODE_ORDER[item] <= MODE_ORDER[next]
+            : MODE_ORDER[item] < MODE_ORDER[currentMode.current] &&
+              MODE_ORDER[item] >= MODE_ORDER[next],
+        );
     if (direction === "backward") stops.reverse();
 
     const turnOne = (step: number) => {
@@ -255,8 +273,11 @@ export default function AuthBook() {
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const next: FieldErrors = {};
-    if (!EMAIL_REGEX.test(fields.email.trim()))
+
+    // email dicek di semua mode kecuali OTP (email sudah diisi di Sign Up)
+    if (mode !== "otp" && !EMAIL_REGEX.test(fields.email.trim()))
       next.email = "Masukkan alamat email yang valid.";
+
     if (mode === "signup") {
       if (fields.name.trim().length < 2)
         next.name = "Nama lengkap minimal 2 karakter.";
@@ -269,20 +290,30 @@ export default function AuthBook() {
     }
     if (mode === "signin" && !fields.password)
       next.password = "Password wajib diisi.";
+    if (mode === "otp" && !OTP_REGEX.test(fields.otp))
+      next.otp = "Masukkan 5 digit kode.";
+
     setErrors(next);
-    if (Object.keys(next).length === 0) {
-      if (mode === "signup") {
-        // TODO: nanti panggil API di sini, lalu setShowSuccess(true) setelah sukses
-        setShowSuccess(true);
-      } else {
-        setMessage(
-          mode === "forgot"
-            ? "Email valid. Ini masih demo frontend."
-            : "Form valid. Ini masih demo frontend.",
-        );
-      }
+    if (Object.keys(next).length > 0) return;
+
+    if (mode === "signup") {
+      // TODO: panggil API daftar di sini, lalu setShowSuccess(true) setelah sukses
+      setShowSuccess(true);
+    } else if (mode === "forgot") {
+      // TODO: panggil API kirim OTP reset di sini. Kalau sukses → pindah ke halaman OTP.
+      setField("otp", "");
+      navigate("otp");
+    } else if (mode === "otp") {
+      // TODO: panggil API verifikasi OTP di sini. Kalau sukses → lanjut (mis. halaman password baru).
+      setMessage("Kode valid. Ini masih demo frontend.");
+    } else {
+      setMessage("Form valid. Ini masih demo frontend.");
     }
   };
+
+  // halaman OTP bagian dari alur Forgot Password, jadi tab Forgot tetap menyala
+  const activeMode = target ?? mode;
+  const tabMode: AuthMode = activeMode === "otp" ? "forgot" : activeMode;
 
   const onSocial = (_provider: "Google") =>
     setMessage(
@@ -302,7 +333,7 @@ export default function AuthBook() {
     <div className="pb-stage">
       <div className="pb-book-layout">
         <AuthTabs
-          mode={target ?? mode}
+          mode={tabMode}
           onChange={navigate}
           disabled={Boolean(target)}
         />
