@@ -43,7 +43,7 @@ export default function ForgotPasswordForm({
             />
           </div>
 
-          <PrimaryButton>Kirim Link Reset</PrimaryButton>
+          <PrimaryButton>Kirim OTP Reset</PrimaryButton>
         </form>
 
         <p className="pb-legal">

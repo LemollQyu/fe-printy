@@ -23,6 +23,7 @@ import {
   type FieldErrors,
   type FieldName,
 } from "./auth-types";
+import Botanical from "@/components/popup/Botanical";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -171,6 +172,7 @@ export default function AuthBook() {
   const serial = useRef(0);
   const shouldReduceMotion = useReducedMotion();
   const mode = leftMode; // mode form yang sedang aktif
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(
     () => () => {
@@ -269,11 +271,16 @@ export default function AuthBook() {
       next.password = "Password wajib diisi.";
     setErrors(next);
     if (Object.keys(next).length === 0) {
-      setMessage(
-        mode === "forgot"
-          ? "Email valid. Ini masih demo frontend."
-          : "Form valid. Ini masih demo frontend.",
-      );
+      if (mode === "signup") {
+        // TODO: nanti panggil API di sini, lalu setShowSuccess(true) setelah sukses
+        setShowSuccess(true);
+      } else {
+        setMessage(
+          mode === "forgot"
+            ? "Email valid. Ini masih demo frontend."
+            : "Form valid. Ini masih demo frontend.",
+        );
+      }
     }
   };
 
@@ -354,6 +361,15 @@ export default function AuthBook() {
           ) : null}
         </div>
       </div>
+
+      <Botanical
+        open={showSuccess}
+        onClose={() => setShowSuccess(false)}
+        closeOnOverlayClick={false}
+        contentClassName="text-center"
+      >
+        {/* isi sendiri */}
+      </Botanical>
     </div>
   );
 }
