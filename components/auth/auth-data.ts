@@ -1,5 +1,7 @@
 import type { AuthMode } from './auth-types';
 
+
+
 /* Hanya mode yang tampil sebagai TAB. OTP sengaja tidak di sini. */
 export const AUTH_MODES: { value: AuthMode; label: string; icon: 'user-round' | 'lock-keyhole' | 'key-round'; order: number }[] = [
   { value: 'signup', label: 'Sign Up', icon: 'user-round', order: 1 },
@@ -9,14 +11,22 @@ export const AUTH_MODES: { value: AuthMode; label: string; icon: 'user-round' | 
 
 /* Mode "langkah" = halaman buku yang bukan tab. Perpindahan dari/ke sini
    selalu satu kali balik lembar (tanpa melewati halaman lain). */
-export const STEP_MODES: AuthMode[] = ['otp'];
+export const STEP_MODES: AuthMode[] = ['otp', 'reset'];
+
+/* Halaman langkah dianggap berada di posisi tab induknya saat menghitung
+   berapa lembar yang harus dibalik. */
+export const STEP_PARENT: Partial<Record<AuthMode, AuthMode>> = {
+  otp: 'forgot',
+  reset: 'forgot',
+};
 
 export const MODE_ORDER: Record<AuthMode, number> = {
   ...AUTH_MODES.reduce((acc, item) => {
     acc[item.value] = item.order;
     return acc;
   }, {} as Record<AuthMode, number>),
-  otp: 3.5, // setelah forgot (3): Forgot → OTP
+  otp: 3.5,
+  reset: 3.7, // OTP → Reset
 };
 
 export const PASSWORD_RULES = [
@@ -59,6 +69,13 @@ export const PAGE_DECOR: Record<AuthMode, {
     rightQuoteTop: 'Kode kecil ini memastikan halamanmu tetap milikmu seorang.',
     rightSignature: ['Hampir Selesai,', 'Satu Kode Lagi.'],
     leftDecor: 'otp',
+    rightDecor: 'otp',
+  },
+    reset: {
+    rightEyebrow: 'LEMBAR BARU\nUNTUK AKUN ANDA',
+    rightQuoteTop: 'Tulis ulang kuncinya, lalu lanjutkan ceritamu.',
+    rightSignature: ['Kode Terverifikasi,', 'Buat Yang Baru.'],
+    leftDecor: 'otp', // pakai dekor OTP supaya tidak perlu CSS baru
     rightDecor: 'otp',
   },
 };

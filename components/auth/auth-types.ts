@@ -1,4 +1,4 @@
-export type AuthMode = 'signup' | 'signin' | 'forgot' | 'otp';
+export type AuthMode = 'signup' | 'signin' | 'forgot' | 'otp' | 'reset';
 export type AuthFields = {
   name: string;
   email: string;
